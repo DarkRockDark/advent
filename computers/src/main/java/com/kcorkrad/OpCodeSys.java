@@ -2,28 +2,49 @@ package main.java.com.kcorkrad;
 
 public class OpCodeSys {
 
-    public Integer[] getResult(Integer[] input) {
+    private int opCodePointer;
+    private int destinationPointer;
+    private int operandOnePointer;
+    private int operandTwoPointer;
 
-        int opCodeLocation = 0;
-        int resultPosition;
-        int instruction = input[opCodeLocation];
 
-        while (instruction != 99) {
-            if (instruction == 1) {
-                resultPosition = input[opCodeLocation + 3];
-                input[resultPosition] = input[opCodeLocation + 1] + input[opCodeLocation + 2];
+    public Integer[] processIntCode(Integer[] intCodeProgram) {
+        while (true) {
+            int opCode = intCodeProgram[opCodePointer];
+
+            if (opCode == 99) {
+                // stop, reset opCodePointer
+                opCodePointer = 0;
+                return intCodeProgram;
+
+            } else if (opCode == 1) {
+                addition(intCodeProgram);
+
+            } else if (opCode == 2) {
+                multiply(intCodeProgram);
+
+            } else {
+                // unrecognized code, should throw error
+                System.out.println("unrecognized instruction: " + opCode + "\nat location: " + opCodePointer);
 
             }
-            if (instruction == 2) {
-                resultPosition = input[opCodeLocation + 3];
-                input[resultPosition] = input[opCodeLocation + 1] * input[opCodeLocation + 2];
-            }
-            if (instruction == 99) {
-                break;
-            }
-            opCodeLocation += 4;
+            opCodePointer += 4;
         }
-
-        return input;
     }
+
+
+    private void multiply(Integer[] intCodeProgram) {
+        operandOnePointer = intCodeProgram[opCodePointer + 1];
+        operandTwoPointer = intCodeProgram[opCodePointer + 2];
+        destinationPointer = intCodeProgram[opCodePointer + 3];
+        intCodeProgram[destinationPointer] = intCodeProgram[operandOnePointer] * intCodeProgram[operandTwoPointer];
+    }
+
+    private void addition(Integer[] intCodeProgram) {
+        operandOnePointer = intCodeProgram[opCodePointer + 1];
+        operandTwoPointer = intCodeProgram[opCodePointer + 2];
+        destinationPointer = intCodeProgram[opCodePointer + 3];
+        intCodeProgram[destinationPointer] = intCodeProgram[operandOnePointer] + intCodeProgram[operandTwoPointer];
+    }
+
 }
